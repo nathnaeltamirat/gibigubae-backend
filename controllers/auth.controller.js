@@ -22,7 +22,7 @@ const handleError = (res, err) => {
 // Sign up
 exports.signUp = async (req, res) => {
   try {
-    const {
+    let {
       first_name,
       father_name,
       grand_father_name,
@@ -54,7 +54,7 @@ exports.signUp = async (req, res) => {
       if (!req.body[field])
         throw { statusCode: 400, message: `Missing required field: ${field}` };
     }
-
+    email = email.toLowerCase();
     // Check duplicate email
     const existingStudent = await Student.findOne({ where: { email } });
     if (existingStudent)
@@ -131,10 +131,10 @@ exports.signUp = async (req, res) => {
 // Sign in
 exports.signIn = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
     if (!email || !password)
       throw { statusCode: 400, message: "Missing email or password" };
-
+    email = email.toLowerCase();
     const student = await Student.findOne({ where: { email } });
     if (!student) throw { statusCode: 404, message: "Student not found" };
 
