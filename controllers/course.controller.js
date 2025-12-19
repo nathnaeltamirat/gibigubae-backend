@@ -114,110 +114,110 @@ exports.deleteCourse = async (req, res) => {
   }
 };
 
-exports.createCourse = async (req, res) => {
-  try {
-    const {
-      course_name,
-      description,
-      start_date,
-      end_date,
-      enrollment_start_date,
-      enrollment_deadline,
-    } = req.body;
+// exports.createCourse = async (req, res) => {
+//   try {
+    // const {
+    //   course_name,
+    //   description,
+    //   start_date,
+    //   end_date,
+    //   enrollment_start_date,
+    //   enrollment_deadline,
+    // } = req.body;
 
-    if (
-      !course_name ||
-      !description ||
-      !start_date ||
-      !end_date ||
-      !enrollment_start_date ||
-      !enrollment_deadline
-    ) {
-      throw { statusCode: 400, message: "All fields are required" };
-    }
+    // if (
+    //   !course_name ||
+    //   !description ||
+    //   !start_date ||
+    //   !end_date ||
+    //   !enrollment_start_date ||
+    //   !enrollment_deadline
+    // ) {
+    //   throw { statusCode: 400, message: "All fields are required" };
+    // }
 
-    const course = await Course.create({
-      course_name,
-      description,
-      start_date: new Date(start_date),
-      end_date: new Date(end_date),
-      enrollment_start_date: new Date(enrollment_start_date),
-      enrollment_deadline: new Date(enrollment_deadline),
-    });
+    // const course = await Course.create({
+    //   course_name,
+    //   description,
+    //   start_date: new Date(start_date),
+    //   end_date: new Date(end_date),
+    //   enrollment_start_date: new Date(enrollment_start_date),
+    //   enrollment_deadline: new Date(enrollment_deadline),
+    // });
 
-    res.status(201).json({ success: true, data: course });
-  } catch (err) {
-    handleError(res, err);
-  }
-};
+    // res.status(201).json({ success: true, data: course });
+  // } catch (err) {
+  //   handleError(res, err);
+  // }
+// };
 
-exports.getCourses = async (req, res) => {
-  try {
-    const courses = await Course.findAll();
-    res.json({ success: true, data: courses });
-  } catch (err) {
-    handleError(res, err);
-  }
-};
+// exports.getCourses = async (req, res) => {
+//   try {
+//     const courses = await Course.findAll();
+//     res.json({ success: true, data: courses });
+//   } catch (err) {
+//     handleError(res, err);
+//   }
+// };
 
-exports.getCourseById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const course = await Course.findByPk(id);
-    if (!course) throw { statusCode: 404, message: "Course not found" };
+// exports.getCourseById = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const course = await Course.findByPk(id);
+//     if (!course) throw { statusCode: 404, message: "Course not found" };
 
-    res.json({ success: true, data: course });
-  } catch (err) {
-    handleError(res, err);
-  }
-};
+//     res.json({ success: true, data: course });
+//   } catch (err) {
+//     handleError(res, err);
+//   }
+// };
 
-exports.updateCourse = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const course = await Course.findByPk(id);
-    if (!course) throw { statusCode: 404, message: "Course not found" };
+// exports.updateCourse = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const course = await Course.findByPk(id);
+//     if (!course) throw { statusCode: 404, message: "Course not found" };
 
-    const {
-      course_name,
-      description,
-      start_date,
-      end_date,
-      enrollment_start_date,
-      enrollment_deadline,
-    } = req.body;
+//     const {
+//       course_name,
+//       description,
+//       start_date,
+//       end_date,
+//       enrollment_start_date,
+//       enrollment_deadline,
+//     } = req.body;
 
-    await course.update({
-      course_name: course_name || course.course_name,
-      description: description || course.description,
-      start_date: start_date ? new Date(start_date) : course.start_date,
-      end_date: end_date ? new Date(end_date) : course.end_date,
-      enrollment_start_date: enrollment_start_date
-        ? new Date(enrollment_start_date)
-        : course.enrollment_start_date,
-      enrollment_deadline: enrollment_deadline
-        ? new Date(enrollment_deadline)
-        : course.enrollment_deadline,
-    });
+//     await course.update({
+//       course_name: course_name || course.course_name,
+//       description: description || course.description,
+//       start_date: start_date ? new Date(start_date) : course.start_date,
+//       end_date: end_date ? new Date(end_date) : course.end_date,
+//       enrollment_start_date: enrollment_start_date
+//         ? new Date(enrollment_start_date)
+//         : course.enrollment_start_date,
+//       enrollment_deadline: enrollment_deadline
+//         ? new Date(enrollment_deadline)
+//         : course.enrollment_deadline,
+//     });
 
-    res.json({ success: true, data: course });
-  } catch (err) {
-    handleError(res, err);
-  }
-};
+//     res.json({ success: true, data: course });
+//   } catch (err) {
+//     handleError(res, err);
+//   }
+// };
 
-exports.deleteCourse = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const course = await Course.findByPk(id);
-    if (!course) throw { statusCode: 404, message: "Course not found" };
+// exports.deleteCourse = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const course = await Course.findByPk(id);
+//     if (!course) throw { statusCode: 404, message: "Course not found" };
 
-    await course.destroy();
-    res.json({ success: true, message: "Course deleted successfully" });
-  } catch (err) {
-    handleError(res, err);
-  }
-};
+//     await course.destroy();
+//     res.json({ success: true, message: "Course deleted successfully" });
+//   } catch (err) {
+//     handleError(res, err);
+//   }
+// };
 
 exports.getStudentCourses = async (req, res) => {
   try {
