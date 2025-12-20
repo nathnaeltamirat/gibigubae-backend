@@ -9,6 +9,9 @@ const enrollmentRouter = require("./routes/enrollment.route");
 const attendanceRouter = require("./routes/attendance.route");
 const studentRouter = require("./routes/student.route");
 
+const cron = require('node-cron');
+const { promoteStudents } = require('./utils/studentPromotion');
+
 const app = express();
 
 app.use(
@@ -29,4 +32,12 @@ app.use("/api/v1/course",courseRouter);
 app.use("/api/v1/enrollment",enrollmentRouter);
 app.use("/api/v1/attendance",attendanceRouter);
 app.use("/api/v1/student",studentRouter);
+
+// Schedule for Ethiopian New Year (Meskerem 1 ≈ Sep 11)
+// Runs at midnight Sep 11
+cron.schedule('0 0 11 9 *', async () => {
+  console.log("Running student promotion...");
+  await promoteStudents();
+});
+
 module.exports = app;

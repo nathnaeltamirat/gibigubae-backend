@@ -1,6 +1,7 @@
 const express = require("express");
 const { authenticate } = require("../middlewares/authenticator.middleware");
 const { authorizeAdmin } = require("../middlewares/authorizeAdmin.middleware");
+const courseController = require('../controllers/courseController');
 const {
   getAllStudents,
   updateStudentByAdmin,
@@ -41,6 +42,12 @@ studentRouter.get(
   "/search/:keyword",
   authenticate,
   searchStudents
+);
+
+studentRouter.get(
+  '/courses', 
+  authenticate, 
+  courseController.getAvailableCoursesForStudent
 );
 
 module.exports = studentRouter;

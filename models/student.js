@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
     id_card_image_path: { type: DataTypes.STRING, allowNull: false },
     role: { type: DataTypes.ENUM("student", "admin"), defaultValue: "student" },
     is_verified: { type: DataTypes.BOOLEAN, defaultValue: false },
+    is_graduated: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
     // Academic info fields
     department: { type: DataTypes.ENUM(...DEPARTMENTS), allowNull: true },
     year: { type: DataTypes.INTEGER, allowNull: true },
