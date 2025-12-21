@@ -291,34 +291,47 @@ exports.getAvailableCoursesForStudent = async (req, res) => {
     const student = await Student.findByPk(studentId);
     if (!student) throw { statusCode: 404, message: "Student not found" };
 
-    // Fetch courses for the student's year (and optionally semester)
+    // Fetch courses for the student's year
     const courses = await Course.findAll({
       where: {
-        year_level: student.year, // only courses for student's current year
+        year_level: student.year,
       },
       include: [
         {
           model: Enrollment,
           as: "enrollments",
           where: { studentId },
-          required: false, // include courses even if not enrolled
+          required: false,
         },
       ],
       order: [["semester", "ASC"], ["course_name", "ASC"]],
     });
 
-    // Format response
-    const formattedCourses = courses.map((course) => ({
-      id: course.id,
-      course_name: course.course_name,
-      description: course.description,
-      semester: course.semester,
-      start_date: course.start_date,
-      end_date: course.end_date,
-      enrollment_start_date: course.enrollment_start_date,
-      enrollment_deadline: course.enrollment_deadline,
-      alreadyEnrolled: course.enrollments.length > 0,
-    }));
+    // Prepare semester-based grouping
+    const groupedCourses = {
+      semester_1: [],
+      semester_2: [],
+    };
+
+    courses.forEach((course) => {
+      const formattedCourse = {
+        id: course.id,
+        course_name: course.course_name,
+        description: course.description,
+        semester: course.semester,
+        start_date: course.start_date,
+        end_date: course.end_date,
+        enrollment_start_date: course.enrollment_start_date,
+        enrollment_deadline: course.enrollment_deadline,
+        alreadyEnrolled: course.enrollments.length > 0,
+      };
+
+      if (course.semester === 1) {
+        groupedCourses.semester_1.push(formattedCourse);
+      } else if (course.semester === 2) {
+        groupedCourses.semester_2.push(formattedCourse);
+      }
+    });
 
     res.json({
       success: true,
@@ -327,9 +340,10 @@ exports.getAvailableCoursesForStudent = async (req, res) => {
         name: `${student.first_name} ${student.father_name} ${student.grand_father_name}`,
         year: student.year,
       },
-      totalCourses: formattedCourses.length,
-      courses: formattedCourses,
+      totalCourses: courses.length,
+      courses: groupedCourses,
     });
+
   } catch (err) {
     console.error(err);
     res.status(err.statusCode || 500).json({
