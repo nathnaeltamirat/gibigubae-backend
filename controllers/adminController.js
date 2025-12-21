@@ -1,4 +1,4 @@
-const promoteStudents = require("../utils/promoteStudents");
+const promoteStudents = require("../utils/studentPromotion");
 
 exports.manualPromotion = async (req, res) => {
   try {
