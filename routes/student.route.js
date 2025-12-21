@@ -1,7 +1,7 @@
 const express = require("express");
 const { authenticate } = require("../middlewares/authenticator.middleware");
 const { authorizeAdmin } = require("../middlewares/authorizeAdmin.middleware");
-const courseController = require('../controllers/courseController');
+const courseController = require('../controllers/course.controller');
 const {
   getAllStudents,
   updateStudentByAdmin,
