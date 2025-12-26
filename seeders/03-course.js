@@ -10,7 +10,11 @@ module.exports = {
         start_date: new Date(),
         end_date: new Date(new Date().setMonth(new Date().getMonth() + 3)),
         enrollment_start_date: new Date(),
-        enrollment_deadline: new Date(new Date().setMonth(new Date().getMonth() + 1))
+        enrollment_deadline: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+        year_level: 1,
+        semester: 1,
+        created_at: new Date(),
+        updated_at: new Date(),
       },
       {
         course_name: "Mechanical Design",
@@ -18,7 +22,11 @@ module.exports = {
         start_date: new Date(),
         end_date: new Date(new Date().setMonth(new Date().getMonth() + 3)),
         enrollment_start_date: new Date(),
-        enrollment_deadline: new Date(new Date().setMonth(new Date().getMonth() + 1))
+        enrollment_deadline: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+        year_level: 2,
+        semester: 1,
+        created_at: new Date(),
+        updated_at: new Date(),
       }
     ]);
   },

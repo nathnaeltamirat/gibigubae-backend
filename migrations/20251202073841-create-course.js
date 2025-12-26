@@ -10,6 +10,8 @@ module.exports = {
       end_date: { type: Sequelize.DATE, allowNull: false },
       enrollment_start_date: { type: Sequelize.DATE, allowNull: false },
       enrollment_deadline: { type: Sequelize.DATE, allowNull: false },
+      year_level: { type: Sequelize.INTEGER, allowNull: false },
+      semester: { type: Sequelize.INTEGER, allowNull: false },
       created_at: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.fn('NOW') },
       updated_at: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.fn('NOW') },
     });
