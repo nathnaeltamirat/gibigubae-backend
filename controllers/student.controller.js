@@ -24,7 +24,10 @@ exports.updateStudentByAdmin = async (req, res) => {
   try {
     const { studentId } = req.params;
 
-    const student = await Student.findByPk(studentId);
+    // const student = await Student.findByPk(studentId);
+    const student = await Student.findByPk(studentId, {
+      attributes: { exclude: ["password", "resetToken"] },
+    });
     if (!student)
       return res.status(404).json({
         success: false,

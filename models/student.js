@@ -21,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
     father_name: { type: DataTypes.STRING, allowNull: false },
     grand_father_name: { type: DataTypes.STRING, allowNull: false },
     christian_name: { type: DataTypes.STRING, allowNull: true },
+    confessionFatherId: {type: DataTypes.INTEGER,allowNull: true,
+      references: {model: "ConfessionFathers",key: "id",},
+      onDelete: "SET NULL",
+    },
     id_number: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: false, unique: true },
     password: { type: DataTypes.STRING, allowNull: false },
@@ -29,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
     id_card_image_path: { type: DataTypes.STRING, allowNull: false },
     role: { type: DataTypes.ENUM("student", "admin"), defaultValue: "student" },
     is_verified: { type: DataTypes.BOOLEAN, defaultValue: false },
+    is_graduated: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
     // Academic info fields
     department: { type: DataTypes.ENUM(...DEPARTMENTS), allowNull: true },
     year: { type: DataTypes.INTEGER, allowNull: true },

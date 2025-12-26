@@ -1,4 +1,6 @@
 const { Enrollment, Student, Course } = require("../models");
+const { enrollStudentSelf } = require("../services/enrollment.service");
+
 
 // Helper for consistent error responses
 const handleError = (res, err) => {
@@ -132,5 +134,39 @@ exports.removeEnrollmentByAdmin = async (req, res) => {
     });
   } catch (err) {
     handleError(res, err);
+  }
+};
+
+// ------------------------------
+// Student self-enrollment
+// ------------------------------
+exports.enrollSelf = async (req, res) => {
+  try {
+    const studentId = req.user.user_id; // from JWT middleware
+    const { courseId } = req.body;
+
+    if (!courseId) {
+      return res.status(400).json({
+        success: false,
+        message: "courseId is required",
+      });
+    }
+
+    const enrollment = await enrollStudentSelf({
+      studentId,
+      courseId,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Enrolled successfully",
+      data: enrollment,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(err.statusCode || 500).json({
+      success: false,
+      message: err.message || "Enrollment failed",
+    });
   }
 };

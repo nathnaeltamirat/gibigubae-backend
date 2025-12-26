@@ -8,7 +8,7 @@ module.exports = {
       father_name: { type: Sequelize.STRING, allowNull: false },
       grand_father_name: { type: Sequelize.STRING, allowNull: false },
       christian_name: { type: Sequelize.STRING, allowNull: true },
-      id_number: { type: Sequelize.STRING, allowNull: false },
+      id_number: { type: Sequelize.STRING, allowNull: false },       // add unique: true    since all id is unique
       email: { type: Sequelize.STRING, allowNull: false, unique: true },
       password: { type: Sequelize.STRING, allowNull: false },
       gender: { type: Sequelize.ENUM("male", "female"), allowNull: false },

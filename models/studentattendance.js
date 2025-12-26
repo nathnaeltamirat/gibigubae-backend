@@ -2,24 +2,38 @@ module.exports = (sequelize, DataTypes) => {
   const StudentAttendance = sequelize.define(
     "StudentAttendance",
     {
-      studentId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        field: "student_id",
-        references: { model: "Students", key: "id" },
+    studentId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Students",
+        key: "id",
       },
-      attendanceId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        field: "attendance_id",
-        references: { model: "Attendances", key: "id" },
+      onDelete: "CASCADE",
+    },
+    attendanceId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Attendances",
+        key: "id",
       },
-      present: { type: DataTypes.BOOLEAN, defaultValue: false },
+      onDelete: "CASCADE",
+    },
+    present: { type: DataTypes.BOOLEAN, defaultValue: false },
     },
     {
       tableName: "StudentAttendances",
       timestamps: true,
       underscored: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+      indexes: [
+      {
+        unique: true,
+        fields: ["student_id", "attendance_id"]
+      }
+    ]
     }
   );
 
