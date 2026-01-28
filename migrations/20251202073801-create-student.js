@@ -8,7 +8,7 @@ module.exports = {
       father_name: { type: Sequelize.STRING, allowNull: false },
       grand_father_name: { type: Sequelize.STRING, allowNull: false },
       christian_name: { type: Sequelize.STRING, allowNull: true },
-      id_number: { type: Sequelize.STRING, allowNull: false },       // add unique: true    since all id is unique
+      id_number: { type: Sequelize.STRING, allowNull: false, unique: true },
       email: { type: Sequelize.STRING, allowNull: false, unique: true },
       password: { type: Sequelize.STRING, allowNull: false },
       gender: { type: Sequelize.ENUM("male", "female"), allowNull: false },
@@ -44,6 +44,7 @@ module.exports = {
         allowNull: true,
         onDelete: "SET NULL"
       },
+      is_graduated: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false },
       created_at: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.fn('NOW') },
       updated_at: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.fn('NOW') },
     });

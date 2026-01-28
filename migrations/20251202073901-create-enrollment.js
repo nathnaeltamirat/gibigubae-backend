@@ -20,9 +20,16 @@ module.exports = {
       created_at: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.fn('NOW') },
       updated_at: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.fn('NOW') },
     });
+
+    await queryInterface.addConstraint("Enrollments", {
+      fields: ["studentId", "courseId"],
+      type: "unique",
+      name: "unique_student_course_enrollment",
+    });
   },
 
   async down(queryInterface) {
+    await queryInterface.removeConstraint('Enrollments', 'unique_student_course_enrollment');
     await queryInterface.dropTable('Enrollments');
   }
 };

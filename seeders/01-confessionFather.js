@@ -1,11 +1,10 @@
 'use strict';
-const { ConfessionFather } = require('../models');
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await ConfessionFather.bulkCreate([
-      { name: "Father X", phone_number: "1234567890" },
-      { name: "Father Y", phone_number: "0987654321" }
+    await queryInterface.bulkInsert('ConfessionFathers', [
+      { name: 'Father John', phone_number: '0911000001', created_at: new Date(), updated_at: new Date() },
+      { name: 'Father Michael', phone_number: '0911000002', created_at: new Date(), updated_at: new Date() }
     ]);
   },
 
