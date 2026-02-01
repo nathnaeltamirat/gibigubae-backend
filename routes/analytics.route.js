@@ -6,7 +6,19 @@ const { authorizeAdmin } = require("../middlewares/authorizeAdmin.middleware");
 const {
   getAttendanceOverview,
   getTopMetrics,
-  getAttendanceTrend
+  getAttendanceTrend,
+  getCourseListAnalytics,
+  getCourseSummaryAnalytics,
+  getAtRiskStudentsByCourse,
+  getAtRiskSummaryByCourse,
+  getCourseAttendanceAnalysis,
+  getCourseSessionEffectiveness,
+  getSessionAttendanceBreakdown,
+  getStudentMonthlyAttendance,
+  getMonthlyCourseSummary,
+  getCourseParticipationInsights,
+  getDepartmentAnalytics
+  // getCourseSessionEffectiveness
 //   courseSummary,
 //   courseList
 } = require("../controllers/analytics.controller");
@@ -17,9 +29,18 @@ analyticsRouter.use(authenticate, authorizeAdmin);
 analyticsRouter.get("/daily/overview", getAttendanceOverview);
 analyticsRouter.get("/top-metrics", getTopMetrics);
 analyticsRouter.get("/attendance-trend", getAttendanceTrend);
+analyticsRouter.get("/courses", getCourseListAnalytics);
+analyticsRouter.get("/courses/summary", getCourseSummaryAnalytics);
+analyticsRouter.get("/courses/:courseId/at-risk-students", getAtRiskStudentsByCourse);
+analyticsRouter.get("/courses/:courseId/at-risk-summary", getAtRiskSummaryByCourse);
+analyticsRouter.get("/courses/:courseId/attendance-analysis", getCourseAttendanceAnalysis);
+analyticsRouter.get("/courses/:courseId/session-effectiveness", getCourseSessionEffectiveness);
+analyticsRouter.get("/attendance/:attendanceId/breakdown", getSessionAttendanceBreakdown);
+analyticsRouter.get("/students/:studentId/monthly", getStudentMonthlyAttendance);
+analyticsRouter.get("/courses/:courseId/monthly-summary", getMonthlyCourseSummary);
+analyticsRouter.get("/courses/:courseId/participation-insights", getCourseParticipationInsights);
+analyticsRouter.get("/departments/:department/overview", getDepartmentAnalytics);
 
-
-// analyticsRouter.get("/courses/summary",courseSummary);
 // analyticsRouter.get("/courses", courseList);
 
 
