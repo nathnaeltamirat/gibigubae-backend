@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "build": "npm install"
+    "build": "npm install",
+    "migrate": "npx sequelize-cli db:migrate --env production",
+    "seed": "npx sequelize-cli db:seed:all --env production"
   },
   "repository": {
     "type": "git",
