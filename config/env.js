@@ -10,8 +10,8 @@ const getEnvVar = (name) => {
 
 module.exports = {
   DATABASE_URL: getEnvVar("DATABASE_URL"),
-  NODE_ENV: getEnvVar("NODE_ENV"),
-  PORT: parseInt(getEnvVar("PORT"), 10),
+  NODE_ENV: process.env.NODE_ENV || "development",
+  PORT: parseInt(process.env.PORT || "5000", 10),
   JWT_SECRET: getEnvVar("JWT_SECRET"),
   JWT_REFRESH_SECRET: getEnvVar("JWT_REFRESH_SECRET"),
   JWT_REFRESH_EXPIRES_IN: getEnvVar("JWT_REFRESH_EXPIRES_IN"),
