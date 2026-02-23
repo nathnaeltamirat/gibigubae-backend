@@ -250,18 +250,12 @@ exports.getStudentCourses = async (req, res) => {
     });
 
     // Group by course type for better response structure
-    const grouped = {
-      regular: courses.filter(c => c.course_type === 'regular'),
-      events: courses.filter(c => c.course_type === 'event')
-    };
+    // const grouped = {
+    //   regular: courses.filter(c => c.course_type === 'regular'),
+    //   events: courses.filter(c => c.course_type === 'event')
+    // };
 
-    res.json({ 
-      success: true, 
-      data: {
-        all: courses,
-        grouped
-      }
-    });
+    res.json({ success: true, data: courses });
   } catch (err) {
     handleError(res, err);
   }
@@ -422,13 +416,9 @@ exports.getAvailableCoursesForStudent = async (req, res) => {
       ],
     });
 
-    // Prepare enhanced grouping with course types
-    const groupedCourses = {
-      events: [], // Special events available to all
-      regular: {
-        semester_1: [],
-        semester_2: [],
-      }
+ const groupedCourses = {
+      semester_1: [],
+      semester_2: [],
     };
 
     courses.forEach((course) => {
@@ -436,38 +426,19 @@ exports.getAvailableCoursesForStudent = async (req, res) => {
         id: course.id,
         course_name: course.course_name,
         description: course.description,
-        course_type: course.course_type,
         semester: course.semester,
         start_date: course.start_date,
         end_date: course.end_date,
         enrollment_start_date: course.enrollment_start_date,
         enrollment_deadline: course.enrollment_deadline,
         alreadyEnrolled: course.enrollments.length > 0,
-        // For events, add a note
-        note: course.course_type === 'event' 
-          ? "Special event - open to all students regardless of year"
-          : null
       };
 
-      if (course.course_type === 'regular') {
-        if (course.semester === 1) {
-          groupedCourses.regular.semester_1.push(formattedCourse);
-        } else if (course.semester === 2) {
-          groupedCourses.regular.semester_2.push(formattedCourse);
-        }
-      } else {
-        groupedCourses.events.push(formattedCourse);
+      if (course.semester === 1) {
+        groupedCourses.semester_1.push(formattedCourse);
+      } else if (course.semester === 2) {
+        groupedCourses.semester_2.push(formattedCourse);
       }
-    });
-
-    // Also fetch courses the student is NOT eligible for (for informational purposes)
-    const ineligibleCourses = await Course.findAll({
-      where: {
-        course_type: 'regular',
-        year_level: { [Op.ne]: student.year }
-      },
-      limit: 5, // Limit to avoid too much data
-      attributes: ['id', 'course_name', 'year_level', 'semester']
     });
 
     res.json({
@@ -477,19 +448,8 @@ exports.getAvailableCoursesForStudent = async (req, res) => {
         name: `${student.first_name} ${student.father_name} ${student.grand_father_name}`,
         year: student.year,
       },
-      summary: {
-        totalAvailable: courses.length,
-        events: groupedCourses.events.length,
-        regularCourses: groupedCourses.regular.semester_1.length + groupedCourses.regular.semester_2.length
-      },
+      totalCourses: courses.length,
       courses: groupedCourses,
-      ineligibleCourses: ineligibleCourses.map(c => ({
-        id: c.id,
-        course_name: c.course_name,
-        year_level: c.year_level,
-        semester: c.semester,
-        message: `This course is for year ${c.year_level} students only`
-      }))
     });
 
   } catch (err) {
@@ -500,7 +460,6 @@ exports.getAvailableCoursesForStudent = async (req, res) => {
     });
   }
 };
-
 // -------------------
 // Get All Events (helper endpoint)
 // -------------------
