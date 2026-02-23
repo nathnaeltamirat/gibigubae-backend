@@ -133,20 +133,20 @@ exports.enrollByAdmin = async (req, res) => {
       enrolled_by_admin_id: user.user_id
     });
 
-    // Fetch the complete enrollment with relations
-    const enrollment = await Enrollment.findByPk(newEnroll.id, {
-      include: [
-        { model: Student, as: "student", attributes: ["id", "first_name", "father_name", "email", "year"] },
-        { model: Course, as: "course", attributes: ["id", "course_name", "course_type", "year_level"] }
-      ]
-    });
+//     // Fetch the complete enrollment with relations
+//     const enrollment = await Enrollment.findByPk(newEnroll.id, {
+//       include: [
+//         { model: Student, as: "student", attributes: ["id", "first_name", "father_name", "email", "year"] },
+//         { model: Course, as: "course", attributes: ["id", "course_name", "course_type", "year_level"] }
+//       ]
+//     });
 
     res.status(201).json({ 
-      success: true, 
+      success: true,
+      data: newEnroll,
       message: enrollment.course.course_type === 'regular' 
         ? "Student enrolled in regular course successfully" 
-        : "Student enrolled in event successfully",
-      data: enrollment 
+        : "Student enrolled in event successfully"
     });
   } catch (err) {
     handleError(res, err);
@@ -191,62 +191,75 @@ exports.removeEnrollment = async (req, res) => {
 // ------------------------------
 // List all enrollments (with optional filters)
 // ------------------------------
-exports.getEnrollments = async (req, res) => {
+exports.getEnrollments = async (_req, res) => {
   try {
-    const { courseType, studentId, courseId, page = 1, limit = 50 } = req.query;
-    
-    const whereClause = {};
-    if (studentId) whereClause.studentId = studentId;
-    if (courseId) whereClause.courseId = courseId;
-
-    const courseWhereClause = {};
-    if (courseType && ['regular', 'event'].includes(courseType)) {
-      courseWhereClause.course_type = courseType;
-    }
-
-    const offset = (page - 1) * limit;
-
-    const { count, rows: enrollments } = await Enrollment.findAndCountAll({
-      where: whereClause,
+    const enrollments = await Enrollment.findAll({
       include: [
-        { 
-          model: Student, 
-          as: "student",
-          attributes: ["id", "first_name", "father_name", "grand_father_name", "email", "year"]
-        },
-        { 
-          model: Course, 
-          as: "course",
-          where: courseWhereClause,
-          attributes: ["id", "course_name", "course_type", "year_level", "semester"]
-        },
+        { model: Student, as: "student" },
+        { model: Course, as: "course" },
       ],
-      order: [['created_at', 'DESC']],
-      limit: parseInt(limit),
-      offset: parseInt(offset)
     });
-
-    // Group by course type for better overview
-    const grouped = {
-      regular: enrollments.filter(e => e.course.course_type === 'regular'),
-      events: enrollments.filter(e => e.course.course_type === 'event')
-    };
-
-    res.json({ 
-      success: true, 
-      data: enrollments,
-      grouped,
-      pagination: {
-        total: count,
-        page: parseInt(page),
-        limit: parseInt(limit),
-        pages: Math.ceil(count / limit)
-      }
-    });
+    res.json({ success: true, data: enrollments });
   } catch (err) {
     handleError(res, err);
   }
 };
+// exports.getEnrollments = async (req, res) => {
+//   try {
+//     const { courseType, studentId, courseId, page = 1, limit = 50 } = req.query;
+    
+//     const whereClause = {};
+//     if (studentId) whereClause.studentId = studentId;
+//     if (courseId) whereClause.courseId = courseId;
+
+//     const courseWhereClause = {};
+//     if (courseType && ['regular', 'event'].includes(courseType)) {
+//       courseWhereClause.course_type = courseType;
+//     }
+
+//     const offset = (page - 1) * limit;
+
+//     const { count, rows: enrollments } = await Enrollment.findAndCountAll({
+//       where: whereClause,
+//       include: [
+//         { 
+//           model: Student, 
+//           as: "student",
+//           attributes: ["id", "first_name", "father_name", "grand_father_name", "email", "year"]
+//         },
+//         { 
+//           model: Course, 
+//           as: "course",
+//           where: courseWhereClause,
+//           attributes: ["id", "course_name", "course_type", "year_level", "semester"]
+//         },
+//       ],
+//       order: [['created_at', 'DESC']],
+//       limit: parseInt(limit),
+//       offset: parseInt(offset)
+//     });
+
+//     // Group by course type for better overview
+//     const grouped = {
+//       regular: enrollments.filter(e => e.course.course_type === 'regular'),
+//       events: enrollments.filter(e => e.course.course_type === 'event')
+//     };
+
+//     res.json({ 
+//       success: true, 
+//       data: enrollments,
+//       grouped,
+//       pagination: {
+//         total: count,
+//         page: parseInt(page),
+//         limit: parseInt(limit),
+//         pages: Math.ceil(count / limit)
+//       }
+//     });
+//   } catch (err) {
+//     handleError(res, err);
+//   }
+// };
 
 // ------------------------------
 // Remove enrollment by studentId + courseId
@@ -532,54 +545,54 @@ exports.getEnrollmentStats = async (req, res) => {
 // // ------------------------------
 // // Admin / SuperAdmin enrollment
 // // ------------------------------
-// exports.enrollByAdmin = async (req, res) => {
-//   try {
-//     const user = req.user; // injected by authentication middleware
+exports.enrollByAdmin = async (req, res) => {
+  try {
+    const user = req.user; // injected by authentication middleware
 
-//     // Only admins or superadmins can use this route
-//     if (user.role !== "admin" && user.role !== "super_admin") {
-//       return res.status(403).json({
-//         success: false,
-//         message: "Forbidden: Only Admins can enroll students",
-//       });
-//     }
+    // Only admins or superadmins can use this route
+    if (user.role !== "admin" && user.role !== "super_admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Forbidden: Only Admins can enroll students",
+      });
+    }
 
-//     const { studentId, courseId } = req.body;
+    const { studentId, courseId } = req.body;
 
-//     if (!studentId || !courseId) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "studentId and courseId are required",
-//       });
-//     }
+    if (!studentId || !courseId) {
+      return res.status(400).json({
+        success: false,
+        message: "studentId and courseId are required",
+      });
+    }
 
-//     const studentEntity = await Student.findByPk(studentId);
-//     const courseEntity = await Course.findByPk(courseId);
+    const studentEntity = await Student.findByPk(studentId);
+    const courseEntity = await Course.findByPk(courseId);
 
-//     if (!studentEntity || !courseEntity) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Student or Course not found",
-//       });
-//     }
+    if (!studentEntity || !courseEntity) {
+      return res.status(404).json({
+        success: false,
+        message: "Student or Course not found",
+      });
+    }
 
-//     // Prevent duplicate enrollment
-//     const existingEnroll = await Enrollment.findOne({
-//       where: { studentId, courseId },
-//     });
-//     if (existingEnroll) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Student is already enrolled in this course",
-//       });
-//     }
+    // Prevent duplicate enrollment
+    const existingEnroll = await Enrollment.findOne({
+      where: { studentId, courseId },
+    });
+    if (existingEnroll) {
+      return res.status(400).json({
+        success: false,
+        message: "Student is already enrolled in this course",
+      });
+    }
 
-//     const newEnroll = await Enrollment.create({ studentId, courseId });
-//     res.status(201).json({ success: true, data: newEnroll });
-//   } catch (err) {
-//     handleError(res, err);
-//   }
-// };
+    const newEnroll = await Enrollment.create({ studentId, courseId });
+    res.status(201).json({ success: true, data: newEnroll });
+  } catch (err) {
+    handleError(res, err);
+  }
+};
 
 // // ------------------------------
 // // Remove enrollment
