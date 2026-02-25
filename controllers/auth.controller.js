@@ -183,8 +183,15 @@ exports.signIn = async (req, res) => {
 
 // Logout
 exports.logout = (req, res) => {
-  res.clearCookie("auth_token");
-  res.clearCookie("refresh_token");
+  // IMPORTANT: options must exactly match what was used in res.cookie() when setting
+  // the token — otherwise the browser silently ignores the clear and the cookie survives.
+  const cookieOptions = {
+    httpOnly: true,
+    secure: NODE_ENV === "production",
+    sameSite: NODE_ENV === "production" ? "none" : "lax",
+  };
+  res.clearCookie("auth_token", cookieOptions);
+  res.clearCookie("refresh_token", cookieOptions);
   res.json({ success: true, message: "Logged out successfully" });
 };
 
