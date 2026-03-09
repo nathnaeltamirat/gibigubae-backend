@@ -13,6 +13,7 @@ app.listen(PORT, async () => {
   }
 
   if (NODE_ENV === "production") {
+    console.log(process.env.DATABASE_URL)
     console.log(`🚀 Server is running in production mode at ${PROD_URL}`);
   } else {
     console.log(`🚀 Server is running in development mode at http://localhost:${PORT}`);
